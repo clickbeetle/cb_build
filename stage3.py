@@ -38,7 +38,7 @@ except:
 if(Pkgs):
   pkg_list = " ".join(Pkgs.split(","))
   os.system("cp -v chrootrun_stage3.sh /tmp/")
-  os.system("echo \"emerge --deep --usepkg=y --buildpkg=y "+ str(pkg_list) +"\" >> /tmp/chrootrun_stage3.sh")
+  os.system("echo \"emerge --deep --usepkg=y --buildpkg=y --quiet-build=y "+ str(pkg_list) +"\" >> /tmp/chrootrun_stage3.sh")
     
 
 def cleanUp():

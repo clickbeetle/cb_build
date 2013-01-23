@@ -20,6 +20,7 @@ parser.add_argument("-c","--configroot",dest='configroot',help='configroot dir f
 parser.add_argument("-p","--profile",dest='profile',help='select the profile to use for the build')
 parser.add_argument("-a","--arch",dest='arch',help='select the Arch for the build')
 parser.add_argument("-s","--subarch",dest='subarch',help='select the sub Arch for the build')
+parser.add_argument("-k","--keywords",dest='keywords',help='set the ACCEPT_KEYWORDS flag')
 args = parser.parse_args()
 
 Root = os.path.abspath(str(args.root))
@@ -27,6 +28,7 @@ configRoot = os.path.abspath(str(args.configroot))
 profile = str(args.profile) #"default/linux/amd64/10.0"
 arch = str(args.arch) #"amd64"
 subarch = str(args.subarch) #""
+accept_keywords = str(args.keywords)# ~amd64
 
 MAKEOPTS = "\"-j8\""
 
@@ -63,6 +65,7 @@ try:
   
   buildpkgs.append("app-portage/eix")
   buildpkgs.append("dev-libs/mpc")
+  buildpkgs.append("dev-libs/libffi")
   
   
   
@@ -73,9 +76,9 @@ try:
 
 
   os.environ["BOOTSTRAP_USE"] = subprocess.check_output(["/usr/bin/portageq","envvar","BOOTSTRAP_USE"])
-  os.environ["USE"] = "-* "+ os.environ["BOOTSTRAP_USE"].rstrip().lstrip() + " bindist threads xml ssl openmp"
+  os.environ["USE"] = os.environ["BOOTSTRAP_USE"].rstrip().lstrip() + " bindist threads xml ssl sasl openmp tcl tk python python2 python_abis_2.7 python_abis_3.2"
   
-  os.environ["FEATURES"] = "nodoc noman noinfo ccache mini-manifest -collision-protect"
+  os.environ["FEATURES"] = "nodoc noman noinfo ccache -collision-protect"
   os.environ["ROOT"] = Root
   os.environ["CONFIG_ROOT"] = configRoot
   
@@ -105,18 +108,16 @@ try:
         continue
       if(re.match(r'^ARCH=',xmd)):
         mc.writelines(xmd +"\n")
-      if(re.match(r'^ACCEPT_KEYWORDS=',xmd)):
-        mc.writelines(xmd +"\n")
       if(re.match(r'^CHOST=',xmd)):
         mc.writelines(xmd +"\n")
       if(re.match(r'^USE=',xmd)):
-        mc.writelines(xmd +"\n")
+        mc.writelines("USE=\""+ str(xmd.split('=')[-1].rstrip().rstrip('\"').lstrip().lstrip('\"')) +" "+ os.environ['USE'] +"\"\n")
       if(re.match(r'^CFLAGS=',xmd)):
         mc.writelines(xmd +"\n")
       if(re.match(r'^CXXFLAGS=',xmd)):
         mc.writelines(xmd +"\n")
     mc.writelines("MAKEOPTS=\""+ MAKEOPTS +"\"\n\n")
-    #mc.writelines("FEATURES=\""+ os.environ["FEATURES"] +"\"")
+    mc.writelines("ACCEPT_KEYWORDS=\""+ accept_keywords +"\"")
     mc.close()
   else:
     print("ARCH/SUBARCH DOES NOT EXIST :"+ os.path.join(configRoot, "usr/portage/profiles/arch/"+ arch +"/"+ subarch))
@@ -125,21 +126,24 @@ try:
     
   
   
-  stage1Cmd1 = "USE=\"$USE build\" emerge --usepkg=y --buildpkg=y --oneshot --noreplace  --quiet-build=y --root="+ Root +" --with-bdeps=n --nodeps --config-root="+ configRoot +" sys-apps/baselayout"
-  stage1Cmd2 = "USE=\"$USE build\" emerge --usepkg=y --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=n --config-root="+ configRoot +" sys-apps/portage"
-  stage1Cmd3 = "USE=\"$USE build\" emerge --usepkg=y --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=n --config-root="+ configRoot +" dev-util/ccache"
-  stage1Cmd4 = "emerge --deep --usepkg=y --buildpkg=y --quiet-build=y --root="+ Root +" --config-root="+ configRoot +" "+ " ".join(buildpkgs)
+  stage1Cmd1 = "USE=\""+ os.environ['USE'] +" build\" emerge --buildpkg=y --oneshot --noreplace  --quiet-build=y --root="+ Root +" --with-bdeps=n --nodeps --config-root="+ configRoot +" sys-apps/baselayout"
+  stage1Cmd2 = "USE=\""+ os.environ['USE'] +"\" emerge --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=y --config-root="+ configRoot +" sys-apps/portage"
+  stage1Cmd3 = "USE=\""+ os.environ['USE'] +"\" emerge --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=n --config-root="+ configRoot +" dev-util/ccache"
+  stage1Cmd4 = "USE=\""+ os.environ['USE'] +"\" emerge --deep --usepkg=y --buildpkg=y --with-bdeps=y --quiet-build=y --root="+ Root +" --config-root="+ configRoot +" "+ " ".join(buildpkgs)
 
-
+  print("running : "+ stage1Cmd1)
   if(os.system(stage1Cmd1) != 0):
     cleanUp()
     sys.exit(1)
+  print("running : "+ stage1Cmd2)
   if(os.system(stage1Cmd2) != 0):
     cleanUp()
     sys.exit(2)
+  print("running : "+ stage1Cmd3)
   if(os.system(stage1Cmd3) != 0):
     cleanUp()
     sys.exit(3)
+  print("running : "+ stage1Cmd4)
   if(os.system(stage1Cmd4) != 0):
     cleanUp()
     sys.exit(4)
@@ -148,6 +152,7 @@ try:
   
   os.system("./makeDevNodes.sh")
   cleanUp()
+  sys.exit(0)
   
   
   
@@ -155,6 +160,7 @@ try:
 except:
   print(str(sys.exc_info()))
   cleanUp()
+  sys.exit(5)
   
   
   

@@ -9,7 +9,7 @@ import glob
 
 
 
-parser = argparse.ArgumentParser(description='build stage1',fromfile_prefix_chars='@')
+parser = argparse.ArgumentParser(description='build stage2',fromfile_prefix_chars='@')
 if(len(sys.argv) == 1):
   parser.print_help()
   sys.exit(1)
@@ -38,14 +38,16 @@ try:
   os.system("mount --rbind /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/packages "+ os.path.join(Root, "usr/portage/packages"))
   #os.system("rm -frv "+ os.path.join(Root, "etc/portage/make.profile"))
   #os.system("ln -s ../../usr/portage/profiles/"+ profile +" "+ os.path.join(Root, "etc/portage/make.profile"))
-  
+  os.system("cp -v /etc/resolv.conf "+ os.path.join(Root, "etc/"))
   os.system("cp -v bootstrap.py "+ os.path.join(Root, "tmp/"))
   os.system("cp -v chrootrun_stage2.sh "+ os.path.join(Root, "tmp/"))
   os.system("chroot "+ Root +" /tmp/chrootrun_stage2.sh")
   cleanUp()
+  sys.exit(0)
 except:
   print(str(sys.exc_info()))
   cleanUp()
+  sys.exit(1)
   
   
   
