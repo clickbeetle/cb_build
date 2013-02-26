@@ -43,6 +43,11 @@ if(Pkgs):
 
 def cleanUp():
   os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
 
 cleanUp()
  
