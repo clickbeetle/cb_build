@@ -30,7 +30,7 @@ arch = str(args.arch) #"amd64"
 subarch = str(args.subarch) #""
 accept_keywords = str(args.keywords)# ~amd64
 build_uuid = os.environ['build_uuid']
-MAKEOPTS = "\"-j8\""
+MAKEOPTS = "\"-j12\""
 
 
 def cleanUp():
