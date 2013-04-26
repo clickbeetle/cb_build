@@ -29,7 +29,7 @@ profile = str(args.profile) #"default/linux/amd64/10.0"
 arch = str(args.arch) #"amd64"
 subarch = str(args.subarch) #""
 accept_keywords = str(args.keywords)# ~amd64
-
+build_uuid = os.environ['build_uuid']
 MAKEOPTS = "\"-j8\""
 
 
@@ -96,7 +96,8 @@ try:
   os.system("mkdir -p "+ os.path.join(configRoot, "usr/portage/distfiles"))
   os.system("mkdir -p "+ os.path.join(configRoot, "usr/portage/packages"))
   os.system("mount --rbind /BACKUP/clickbeetleDistfiles.DO_NO_DELETE/distfiles "+ os.path.join(configRoot, "usr/portage/distfiles"))
-  os.system("mount --rbind /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/packages "+ os.path.join(configRoot, "usr/portage/packages"))
+  os.system("mkdir -p /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/"+ build_uuid +"/packages")
+  os.system("mount --rbind /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/"+ build_uuid +"packages "+ os.path.join(configRoot, "usr/portage/packages"))
   os.system("rm -frv "+ os.path.join(configRoot, "etc/portage/make.profile"))
   os.system("ln -s ../../usr/portage/profiles/"+ profile +" "+ os.path.join(configRoot, "etc/portage/make.profile"))
   

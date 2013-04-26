@@ -7,7 +7,7 @@ import subprocess
 import argparse
 import glob
 
-
+build_uuid = os.environ['build_uuid']
 
 parser = argparse.ArgumentParser(description='build stage1',fromfile_prefix_chars='@')
 if(len(sys.argv) == 1):
@@ -62,7 +62,7 @@ try:
   os.system("mkdir -p "+ os.path.join(Root, "usr/portage/distfiles"))
   os.system("mkdir -p "+ os.path.join(Root, "usr/portage/packages"))
   os.system("mount --rbind /BACKUP/clickbeetleDistfiles.DO_NO_DELETE/distfiles "+ os.path.join(Root, "usr/portage/distfiles"))
-  os.system("mount --rbind /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/packages "+ os.path.join(Root, "usr/portage/packages"))
+  os.system("mount --rbind /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/"+ build_uuid +"packages "+ os.path.join(Root, "usr/portage/packages"))
   #os.system("rm -frv "+ os.path.join(Root, "etc/portage/make.profile"))
   #os.system("ln -s ../../usr/portage/profiles/"+ profile +" "+ os.path.join(Root, "etc/portage/make.profile"))
   
