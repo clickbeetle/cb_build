@@ -42,12 +42,12 @@ if(Pkgs):
     
 
 def cleanUp():
-  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
-  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
-  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
-  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
-  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
-  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
+  os.system("cd /;cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
 
 cleanUp()
  
@@ -62,7 +62,7 @@ try:
   os.system("mkdir -p "+ os.path.join(Root, "usr/portage/distfiles"))
   os.system("mkdir -p "+ os.path.join(Root, "usr/portage/packages"))
   os.system("mount --rbind /BACKUP/clickbeetleDistfiles.DO_NO_DELETE/distfiles "+ os.path.join(Root, "usr/portage/distfiles"))
-  os.system("mount --rbind /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/"+ build_uuid +"packages "+ os.path.join(Root, "usr/portage/packages"))
+  os.system("mount --rbind /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/"+ build_uuid +"/packages "+ os.path.join(Root, "usr/portage/packages"))
   #os.system("rm -frv "+ os.path.join(Root, "etc/portage/make.profile"))
   #os.system("ln -s ../../usr/portage/profiles/"+ profile +" "+ os.path.join(Root, "etc/portage/make.profile"))
   

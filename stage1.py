@@ -34,12 +34,12 @@ MAKEOPTS = "\"-j12\""
 
 
 def cleanUp():
-  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
-  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
-  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
-  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
-  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
-  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f ; cd -")
+  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
+  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
+  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
+  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
+  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
+  os.system("cd / ; cat /proc/mounts | gawk \'{print $2}\' | grep -i cb_build | sort -r | xargs umount -f >& /dev/null ; cd -")
   
 
 def scan_profile(file):
@@ -67,9 +67,7 @@ try:
     except: pass
   
   
-  buildpkgs.append("app-portage/eix")
-  buildpkgs.append("dev-libs/mpc")
-  buildpkgs.append("dev-libs/libffi")
+  
   
   
   
@@ -80,9 +78,9 @@ try:
 
 
   os.environ["BOOTSTRAP_USE"] = subprocess.check_output(["/usr/bin/portageq","envvar","BOOTSTRAP_USE"])
-  os.environ["USE"] = os.environ["BOOTSTRAP_USE"].rstrip().lstrip() + " bindist threads xml ssl sasl openmp tcl tk python python2 python_abis_2.7 python_abis_3.2"
+  os.environ["USE"] = os.environ["BOOTSTRAP_USE"].rstrip().lstrip() + " bindist threads xml ssl sasl openmp tcl tk python python2"
   
-  os.environ["FEATURES"] = "nodoc noman noinfo ccache -collision-protect"
+  os.environ["FEATURES"] = "nodoc noman noinfo ccache  "
   os.environ["ROOT"] = Root
   os.environ["CONFIG_ROOT"] = configRoot
   
@@ -97,39 +95,12 @@ try:
   os.system("mkdir -p "+ os.path.join(configRoot, "usr/portage/packages"))
   os.system("mount --rbind /BACKUP/clickbeetleDistfiles.DO_NO_DELETE/distfiles "+ os.path.join(configRoot, "usr/portage/distfiles"))
   os.system("mkdir -p /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/"+ build_uuid +"/packages")
-  os.system("mount --rbind /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/"+ build_uuid +"packages "+ os.path.join(configRoot, "usr/portage/packages"))
+  os.system("mount --rbind /BACKUP/clickbeetleCook.DO_NO_DELETE/cb_build/"+ build_uuid +"/packages "+ os.path.join(configRoot, "usr/portage/packages"))
   os.system("rm -frv "+ os.path.join(configRoot, "etc/portage/make.profile"))
   os.system("ln -s ../../usr/portage/profiles/"+ profile +" "+ os.path.join(configRoot, "etc/portage/make.profile"))
   
-  if(os.path.exists(os.path.join(configRoot, "usr/portage/profiles/arch/"+ arch +"/"+ subarch))):
-    make_defaults = os.path.join(configRoot, "usr/portage/profiles/arch/"+ arch +"/"+ subarch +"/make.defaults")
-    make_conf = os.path.join(configRoot, "etc/portage/make.conf")
-    md = open(make_defaults,"r")
-    mc = open(make_conf,"w")
-    for xmd in md.readlines():
-      if(re.match(r'^\s*$', xmd)):
-        continue
-      if(xmd.find("#") == 0):
-        continue
-      if(re.match(r'^ARCH=',xmd)):
-        mc.writelines(xmd +"\n")
-      if(re.match(r'^CHOST=',xmd)):
-        mc.writelines(xmd +"\n")
-      if(re.match(r'^USE=',xmd)):
-        mc.writelines("USE=\""+ str(xmd.split('=')[-1].rstrip().rstrip('\"').lstrip().lstrip('\"')) +" "+ os.environ['USE'] +"\"\n")
-      if(re.match(r'^CFLAGS=',xmd)):
-        mc.writelines(xmd +"\n")
-      if(re.match(r'^CXXFLAGS=',xmd)):
-        mc.writelines(xmd +"\n")
-    mc.writelines("MAKEOPTS=\""+ MAKEOPTS +"\"\n\n")
-    mc.writelines("ACCEPT_KEYWORDS=\""+ accept_keywords +"\"")
-    mc.close()
-  else:
-    print("ARCH/SUBARCH DOES NOT EXIST :"+ os.path.join(configRoot, "usr/portage/profiles/arch/"+ arch +"/"+ subarch))
-    cleanUp()
-    sys.exit(512)
-    
-  
+  make_conf = os.path.join(configRoot, "etc/portage/make.conf")
+  os.system("cp -av "+ os.path.join(configRoot, "usr/portage/profiles/default/linux/make.defaults.build") +" "+ make_conf)
   
   stage1Cmd1 = "USE=\""+ os.environ['USE'] +" build\" emerge --buildpkg=y --oneshot --noreplace  --quiet-build=y --root="+ Root +" --with-bdeps=n --nodeps --config-root="+ configRoot +" sys-apps/baselayout"
   stage1Cmd2 = "USE=\""+ os.environ['USE'] +"\" emerge --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=y --config-root="+ configRoot +" sys-apps/portage"
