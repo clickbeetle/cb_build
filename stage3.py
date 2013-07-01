@@ -71,6 +71,8 @@ try:
   #os.system("cp -v chrootrun_stage2.sh /tmp/")
   os.system("chroot "+ Root +" /tmp/chrootrun_stage3.sh")
   cleanUp()
+except SystemExit, e:
+  sys.exit(e)
 except:
   print(str(sys.exc_info()))
   cleanUp()

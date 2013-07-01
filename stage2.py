@@ -50,6 +50,8 @@ try:
   os.system("chroot "+ Root +" /tmp/chrootrun_stage2.sh")
   cleanUp()
   sys.exit(0)
+except SystemExit, e:
+  sys.exit(e)
 except:
   print(str(sys.exc_info()))
   cleanUp()

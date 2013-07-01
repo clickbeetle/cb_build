@@ -78,9 +78,9 @@ try:
 
 
   os.environ["BOOTSTRAP_USE"] = subprocess.check_output(["/usr/bin/portageq","envvar","BOOTSTRAP_USE"])
-  os.environ["USE"] = os.environ["BOOTSTRAP_USE"].rstrip().lstrip() + " threads xml ssl sasl openmp tcl tk python python2"
+  os.environ["USE"] = os.environ["BOOTSTRAP_USE"].rstrip().lstrip() + " threads tcl tk gudev kmod udev"
   
-  os.environ["FEATURES"] = "nodoc noman noinfo ccache  "
+  os.environ["FEATURES"] = "nodoc noman noinfo"
   os.environ["ROOT"] = Root
   os.environ["CONFIG_ROOT"] = configRoot
   
@@ -100,12 +100,14 @@ try:
   os.system("ln -s ../../usr/portage/profiles/"+ profile +" "+ os.path.join(configRoot, "etc/portage/make.profile"))
   
   make_conf = os.path.join(configRoot, "etc/portage/make.conf")
+  package_keywords = os.path.join(configRoot, "etc/portage/package.keywords/")
   os.system("cp -av "+ os.path.join(configRoot, "usr/portage/profiles/default/linux/make.defaults.build") +" "+ make_conf)
+  os.system("rsync -av "+ os.path.join(configRoot, "usr/portage/profiles/default/linux/package.keywords/") +" "+ package_keywords)
   
-  stage1Cmd1 = "USE=\""+ os.environ['USE'] +" build\" emerge --buildpkg=y --oneshot --noreplace  --quiet-build=y --root="+ Root +" --with-bdeps=n --nodeps --config-root="+ configRoot +" sys-apps/baselayout"
-  stage1Cmd2 = "USE=\""+ os.environ['USE'] +" build\" emerge --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=y --config-root="+ configRoot +" sys-apps/portage"
-  stage1Cmd3 = "USE=\""+ os.environ['USE'] +" build\" emerge --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=n --config-root="+ configRoot +" dev-util/ccache"
-  stage1Cmd4 = "USE=\""+ os.environ['USE'] +" build\" emerge --deep --usepkg=y --buildpkg=y --with-bdeps=y --quiet-build=y --root="+ Root +" --config-root="+ configRoot +" "+ " ".join(buildpkgs)
+  stage1Cmd1 = "USE=\"-* "+ os.environ['USE'] +" build\" emerge --usepkg=y --buildpkg=y --oneshot --noreplace  --quiet-build=y --root="+ Root +" --with-bdeps=n --nodeps --config-root="+ configRoot +" sys-apps/baselayout dev-lang/python:2.7 dev-lang/python:3.2 dev-lang/python:3.3"
+  stage1Cmd2 = "USE=\"-* "+ os.environ['USE'] +" build\" emerge --usepkg=y --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=y --config-root="+ configRoot +" sys-apps/portage"
+  stage1Cmd3 = "USE=\"-* "+ os.environ['USE'] +" build\" emerge --usepkg=y --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=n --config-root="+ configRoot +" dev-util/ccache"
+  stage1Cmd4 = "USE=\"-* "+ os.environ['USE'] +" build\" emerge --deep --usepkg=y --buildpkg=y --with-bdeps=y --quiet-build=y --root="+ Root +" --config-root="+ configRoot +" "+ " ".join(buildpkgs)
 
   print("running : "+ stage1Cmd1)
   if(os.system(stage1Cmd1) != 0):
@@ -133,8 +135,10 @@ try:
   
   
   
+except SystemExit, e:
+  sys.exit(e)
 except:
-  print(str(sys.exc_info()))
+  err = str(sys.exc_info())
   cleanUp()
   sys.exit(5)
   
