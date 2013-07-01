@@ -78,7 +78,7 @@ try:
 
 
   os.environ["BOOTSTRAP_USE"] = subprocess.check_output(["/usr/bin/portageq","envvar","BOOTSTRAP_USE"])
-  os.environ["USE"] = os.environ["BOOTSTRAP_USE"].rstrip().lstrip() + " threads python xml tcl tk gudev kmod udev"
+  os.environ["USE"] = os.environ["BOOTSTRAP_USE"].rstrip().lstrip() + " threads python xml xattr tcl tk gudev kmod udev"
   
   os.environ["FEATURES"] = "nodoc noman noinfo"
   os.environ["ROOT"] = Root
