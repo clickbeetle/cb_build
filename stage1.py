@@ -114,6 +114,10 @@ try:
   if(os.system(stage1Cmd1) != 0):
     cleanUp()
     sys.exit(1)
+  print("running : "+ stage1Cmd1_1)
+  if(os.system(stage1Cmd1_1) != 0):
+    cleanUp()
+    sys.exit(1)
   print("running : "+ stage1Cmd2)
   if(os.system(stage1Cmd2) != 0):
     cleanUp()
