@@ -104,7 +104,7 @@ try:
   os.system("cp -av "+ os.path.join(configRoot, "usr/portage/profiles/default/linux/make.defaults.build") +" "+ make_conf)
   os.system("rsync -av "+ os.path.join(configRoot, "usr/portage/profiles/default/linux/package.keywords/") +" "+ package_keywords)
   
-  stage1Cmd1 = "USE=\"-* "+ os.environ['USE'] +" build\" emerge --usepkg=y --buildpkg=y --oneshot --noreplace  --quiet-build=y --root="+ Root +" --with-bdeps=n --nodeps --config-root="+ configRoot +" sys-apps/baselayout dev-lang/python:2.7 dev-lang/python:3.2 dev-lang/python:3.3"
+  stage1Cmd1 = "USE=\"-* "+ os.environ['USE'] +" build\" emerge --deep --usepkg=y --buildpkg=y --oneshot --noreplace  --quiet-build=y --root="+ Root +" --with-bdeps=y --config-root="+ configRoot +" sys-apps/baselayout dev-lang/python:2.7 dev-lang/python:3.2 dev-lang/python:3.3"
   stage1Cmd2 = "USE=\"-* "+ os.environ['USE'] +" build\" emerge --usepkg=y --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=y --config-root="+ configRoot +" sys-apps/portage"
   stage1Cmd3 = "USE=\"-* "+ os.environ['USE'] +" build\" emerge --usepkg=y --buildpkg=y --oneshot --quiet-build=y --root="+ Root +" --with-bdeps=n --config-root="+ configRoot +" dev-util/ccache"
   stage1Cmd4 = "USE=\"-* "+ os.environ['USE'] +" build\" emerge --deep --usepkg=y --buildpkg=y --with-bdeps=y --quiet-build=y --root="+ Root +" --config-root="+ configRoot +" "+ " ".join(buildpkgs)
